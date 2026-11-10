@@ -1,5 +1,7 @@
 # La 7.5 %–Sc 1 % co-doped BiFeO₃ memristive synapse — measurement, analysis and simulation code
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24116052.svg)](https://doi.org/10.5281/zenodo.24116052)
+
 Code accompanying the paper *"Reduced-leakage (La, Sc) co-doped BiFeO₃ memristive synapse with statistically
 characterized analog weight updates"* (H. Abbas and G. H. Jaffari, Quaid-i-Azam University; manuscript in preparation).
 It covers every step from the instrument to the
@@ -98,6 +100,8 @@ The raw measurement files are not included; they are available from the authors 
 results of the paper's run are included in `crosssim/`.
 
 ## Licence and citation
+
+Archived on Zenodo: version v1.0.1, https://doi.org/10.5281/zenodo.24116052 (all versions: https://doi.org/10.5281/zenodo.24116051).
 
 Code: MIT licence ([LICENSE](LICENSE)). Please cite the paper ([CITATION.cff](CITATION.cff)). CrossSim is © Sandia
 National Laboratories and is not redistributed here; MNIST is from LeCun et al.

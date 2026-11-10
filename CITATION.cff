@@ -9,7 +9,15 @@ authors:
     given-names: "Ghulam Hassnain"
     affiliation: "Quaid-i-Azam University"
 repository-code: "https://github.com/hasnain7abbas/lasc-doped-bfo"
-version: "1.0.0"
+doi: "10.5281/zenodo.24116052"
+identifiers:
+  - type: doi
+    value: "10.5281/zenodo.24116052"
+    description: "Archived version v1.0.1"
+  - type: doi
+    value: "10.5281/zenodo.24116051"
+    description: "All versions (concept DOI)"
+version: "1.0.1"
 date-released: "2026-11-10"
 license: MIT
 preferred-citation:
