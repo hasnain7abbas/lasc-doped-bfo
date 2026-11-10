@@ -1,7 +1,8 @@
 # La 7.5 %–Sc 1 % co-doped BiFeO₃ memristive synapse — measurement, analysis and simulation code
 
 Code accompanying the paper *"Reduced-leakage (La, Sc) co-doped BiFeO₃ memristive synapse with statistically
-characterized analog weight updates"* ([[authors, journal, DOI]]). It covers every step from the instrument to the
+characterized analog weight updates"* (H. Abbas and G. H. Jaffari, Quaid-i-Azam University; manuscript in preparation).
+It covers every step from the instrument to the
 figures:
 
 ```
@@ -90,6 +91,11 @@ python figures/figure1/build_figure1.py                       # Fig. 1 from the 
 * Electrode area 3.14 × 10⁻⁴ cm² (200 µm Pt dots).
 * SRDP 0.5 Hz (second run) is excluded: its pre-stimulus conductance is 10× lower than all others (see paper).
 * The first ΔG after each polarity reversal is excluded from the update statistics (reversal transient).
+
+## Data
+
+The raw measurement files are not included; they are available from the authors on request. The CrossSim
+results of the paper's run are included in `crosssim/`.
 
 ## Licence and citation
 
