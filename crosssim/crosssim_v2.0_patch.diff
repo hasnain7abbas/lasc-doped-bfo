@@ -1,0 +1,61 @@
+--- a/cross_sim/cross_sim/xbar_simulator/cores/numeric_core.py
++++ b/cross_sim/cross_sim/xbar_simulator/cores/numeric_core.py
+@@ -460,6 +460,27 @@
+         update statistics will be collected on this training example
+         """
+         row_vector,col_vector =  self.clip_and_quantize_update_matrix_inputs(row_vector, col_vector)
++
++        # [La-Sc patch] Fast path: an outer-product update leaves every row with a zero input
++        # untouched (target dw = 0 -> lookup-table update and its write noise are both exactly 0),
++        # so only rows with nonzero input are sent through the device model. Same result, ~5x less
++        # work on MNIST where ~80 % of pixels are 0. Used only where it is provably equivalent.
++        if (self.params.numeric_params.update_model==UpdateModelEnum.DG_LOOKUP
++                and not (self.params.numeric_params.Rp > 0 and self.params.numeric_params.parasitic_backprop)
++                and self.params.numeric_params.Nex_par == 1 and not self.record_updates
++                and not self.params.numeric_params.useGPU
++                and not self.params.numeric_params.dG_lookup.multi_LUT
++                and not self.params.numeric_params.dG_lookup.Nlevels > 0):
++            rows = np.flatnonzero(row_vector)
++            if len(rows) == 0:
++                return
++            sub_w = self.matrix[rows]
++            sub_dw = np.outer(row_vector[rows]*learning_rate, col_vector)
++            sub_upd = self.params.numeric_params.dG_lookup.compute_update(sub_dw, sub_w)
++            sub_w = sub_w + sub_upd
++            self.matrix[rows] = self.xbar_params.weights.quantize(self.xbar_params.weight_clipping.clip(sub_w))
++            return
++
+         if self.params.numeric_params.Rp > 0 and self.params.numeric_params.parasitic_backprop:
+             # Calculate outer product update in the presence of parasitics (experimental feature!!)
+             update = self.calc_OPU_parasitics(row_vector*learning_rate,col_vector)
+--- a/cross_sim/cross_sim/xbar_simulator/parameters/numeric_params.py
++++ b/cross_sim/cross_sim/xbar_simulator/parameters/numeric_params.py
+@@ -408,6 +408,28 @@
+ 			else:
+ 				update = self.lut_variability_update(w, dw, disable_writenoise, disable_nonlinearity)
+ 
++		elif not self.slow_interpolator and not self.gpu_engaged and not disable_nonlinearity:
++			# [La-Sc patch] vectorised single-LUT update, algebraically identical to the branch below:
++			#   update = (dw/ave_dw) * ave_dw(w) + dw_error(CDF, w) * sqrt(dw/ave_dw)
++			# Indices are clamped into the table (fixes the IndexError 101 crash at the table edges).
++			pos = dw > 0
++			wmin_c = self.param_root.xbar_params.weight_clipping.minimum
++			nW = self.ave_dw_inc_vec.shape[0]
++			w_step = (self.w_vec[-1] - self.w_vec[0]) / (nW - 1)
++			wi = ((w - (wmin_c - w_step/2)) / w_step).astype(np.intp)
++			np.clip(wi, 0, nW - 1, out=wi)
++			mean = np.where(pos, self.ave_dw_inc_vec[wi], self.ave_dw_dec_vec[wi])
++			scale = dw / np.where(pos, self.ave_dw_inc, self.ave_dw_dec)
++			update = scale * mean
++			if not disable_writenoise:
++				nC = self.dw_error_matrix_inc.shape[0]
++				CDF_step = (self.CDF_vec[-1] - self.CDF_vec[0]) / (nC - 1)
++				ci = ((np.random.random_sample(w.shape) + CDF_step/2) / CDF_step).astype(np.intp)
++				np.clip(ci, 0, nC - 1, out=ci)
++				flat = ci * nW + wi
++				err = np.where(pos, self.dw_error_matrix_inc.ravel()[flat], self.dw_error_matrix_dec.ravel()[flat])
++				update += err * np.sqrt(np.maximum(scale, 0.0))
++
+ 		else:
+ 			pos_indices  = dw > 0
+ 			neg_indices = ncp.logical_not(pos_indices)

@@ -1,0 +1,8 @@
+CrossSim MNIST, 784-200-10 sigmoid, MSE, lr 0.1, batch 1, 60k train / 10k test
+arm                                                 final  mean last 5     best  epochs
+Ideal (software)                                   98.26%       98.26%   98.36%      40
+Device, nonlinearity only                          95.63%       95.55%   95.77%      40
+Device, nonlinearity + write noise                 88.80%       89.74%   90.91%      40
+Device, + write + read noise (0.03, assumed)       88.54%       89.16%   89.99%      40
+
+loss vs ideal (mean last 5): nonlinearity 2.70 pts, nonlinearity + write noise 8.51 pts

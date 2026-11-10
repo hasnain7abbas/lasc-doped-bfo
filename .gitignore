@@ -1,0 +1,10 @@
+work/
+data/
+crosssim/crosssim/
+crosssim/data/
+crosssim/results/
+crosssim/*_lut*.csv
+__pycache__/
+*.pyc
+*.log
+*_registry.json

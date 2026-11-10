@@ -1,0 +1,11 @@
+# system Python (analysis, CrossSim training, figure assembly)
+numpy>=1.24
+scipy>=1.10
+pandas>=2.0
+openpyxl>=3.1
+matplotlib>=3.7
+pillow>=10.0
+python-pptx>=0.6.23
+torch>=2.0          # only for the MNIST download (torchvision) in crosssim/
+torchvision>=0.15
+# Origin scripts run inside OriginPro 2024's embedded Python (originpro package ships with Origin).

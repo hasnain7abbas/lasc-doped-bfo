@@ -1,0 +1,23 @@
+cff-version: 1.2.0
+message: "If you use this code, please cite the paper below."
+title: "La 7.5 %–Sc 1 % co-doped BiFeO3 memristive synapse: measurement, analysis and simulation code"
+authors:
+  - family-names: "Abbas"
+    given-names: "Hasnain"
+    affiliation: "Quaid-i-Azam University"
+  - family-names: "Jaffari"
+    given-names: "Ghulam Hassnain"
+    affiliation: "Quaid-i-Azam University"
+version: "1.0.0"
+date-released: "2026-11-10"
+license: MIT
+preferred-citation:
+  type: article
+  title: "Reduced-leakage (La, Sc) co-doped BiFeO3 memristive synapse with statistically characterized analog weight updates"
+  authors:
+    - family-names: "Abbas"
+      given-names: "Hasnain"
+    - family-names: "Jaffari"
+      given-names: "Ghulam Hassnain"
+  journal: "TO BE ADDED"
+  year: 2026
