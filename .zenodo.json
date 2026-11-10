@@ -1,0 +1,12 @@
+{
+  "upload_type": "software",
+  "title": "La 7.5 %–Sc 1 % co-doped BiFeO3 memristive synapse: measurement, analysis and simulation code",
+  "description": "Code accompanying the paper \"Reduced-leakage (La, Sc) co-doped BiFeO3 memristive synapse with statistically characterized analog weight updates\": Keithley 2602 TSP/Lua measurement protocols, data preparation (synaptic metrics, PUND, conduction, XRD fits, update statistics), OriginPro plotting scripts, CrossSim 2.0 device-parameter extraction and MNIST training (with results), and assembly of the paper figures.",
+  "creators": [
+    {"name": "Abbas, Hasnain", "affiliation": "Department of Physics, Quaid-i-Azam University, Islamabad, Pakistan"},
+    {"name": "Jaffari, Ghulam Hassnain", "affiliation": "Department of Physics, Quaid-i-Azam University, Islamabad, Pakistan"}
+  ],
+  "license": "MIT",
+  "keywords": ["BiFeO3", "co-doping", "memristor", "artificial synapse", "neuromorphic computing", "CrossSim", "weight-update statistics"],
+  "access_right": "open"
+}
