@@ -16,11 +16,13 @@ STEPS = [
     ("prep_v2.py", HERE),           # second round: smoothed J-E, PUND metrics, EPSC, SDDP, P-E comparison
     ("prep_v3.py", HERE),           # SNDP and retention blocks
     ("prep_v4.py", HERE),           # conduction branches (log J - log E)
-    ("prep_xrd.py", os.path.join(HERE, "xrd")),   # 2-theta offset, (104)/(110) fits, lattice parameters
+    ("prep_xrd.py", os.path.join(HERE, "xrd")),   # 2-theta offset from the BiFeO3 reflections, corrected scans
     ("fix_pt.py", os.path.join(HERE, "xrd")),     # Pt(111) removal from the Sc 1 % scan
-    ("prep_srdp_rep.py", HERE),     # SRDP second run (Fig. 4e)
+    ("prep_xrd_doublet.py", os.path.join(HERE, "xrd")),   # (104)/(110) doublet fit: splitting, c/a, a, c, V (Table 1, S1; Fig. S1)
+    ("prep_srdp_rep.py", HERE),     # SRDP second run (Fig. 3e)
     ("prep_stats.py", HERE),        # dG-G conditional CDF maps, endurance statistics
     ("prep_ltpfit_cs.py", HERE),    # power-law (CrossSim form) fit of the cycle-averaged LTP/LTD
+    ("prep_lut_check.py", HERE),    # CrossSim update model vs measured single-pulse updates (Fig. 6c)
 ]
 
 for script, cwd in STEPS:

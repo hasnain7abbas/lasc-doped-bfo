@@ -39,9 +39,11 @@ python analysis/run_prep.py
 
 Runs, in order: `prep_all` (synaptic workbook, PUND, I–V, endurance), `prep_pe` (P–E loops), `prep_v2`
 (J–E smoothing, PUND metrics ΔPr/PC/LC, EPSC, SDDP), `prep_v3` (SNDP, retention), `prep_v4` (log J–log E
-two-region fits), `xrd/prep_xrd` + `xrd/fix_pt` (instrument offset −0.044°, pseudo-Voigt (104)/(110) fits,
-lattice parameters, Pt(111) removal), `prep_stats` (ΔG–G conditional CDF maps, n = 245 updates per polarity;
-endurance CV) and `prep_ltpfit_cs` (power-law fit in the CrossSim form, α_P = 1.191, α_D = 2.117).
+two-region fits), `xrd/prep_xrd` + `xrd/fix_pt` (instrument offset from the BiFeO₃ reflections, −0.04 ± 0.02°;
+Pt(111) removal), `xrd/prep_xrd_doublet` ((104)/(110) fit with two equal-width pseudo-Voigt peaks plus their Kα₂
+components: splitting, c/a, a, c, V), `prep_srdp_rep` (second SRDP run), `prep_stats` (ΔG–G conditional CDF maps,
+n = 245 updates per polarity; endurance CV), `prep_ltpfit_cs` (power-law fit in the CrossSim form, α_P = 1.191,
+α_D = 2.117) and `prep_lut_check` (CrossSim update model against the measured updates, Fig. 6c).
 Each table is listed with its source sheet and settings in `work/prep/manifest*.json`.
 
 The P–E loops are stored as Origin objects inside `ferro plots.pptx`; `origin_plots/extract_pe/` extracts them
@@ -56,7 +58,8 @@ powershell -File origin_plots/run_origin.ps1 -py origin_plots/plot2_syn.py
 `run_origin.ps1` starts Origin through COM and runs a script with `run -pyf`. Scripts: `plot2_ferro`, `plot2_iv`,
 `plot2_syn`, `plot3_cond`, `plot3_other`, `plot3_schemes`, `plot4_xrd`, `plot5_stats` (ΔG–G maps), `uni_log`,
 `ltp_fit_cs` (Fig. 5c), `fig1_iv` (Fig. 1c); `paper_copies` makes the title-free copies used in the paper; `fig2_colours` gives Fig. 2c, d the film colours of Fig. 2a, b;
-`acc_epoch` draws Fig. 6c from `crosssim/accuracy_vs_epoch.csv`.
+`xrd_decon_v2` writes the converged (104)/(110) fits into the deconvolution graphs (Fig. S1a–d); `lut_check` draws Fig. 6c
+(update model against measured updates); `acc_epoch` draws Fig. 6d from `crosssim/accuracy_vs_epoch.csv`.
 Style: Times New Roman bold, 28 pt, 4 pt frame. `oplib.py` holds the shared helpers.
 
 ## 4. Device parameters and network training (CrossSim 2.0)
@@ -81,9 +84,9 @@ cases) and `crosssim/results_summary.txt` (final, last-five-epoch mean and best 
 ```bash
 python figures/make_spec.py                                   # layout of Figs 2–5 and S1–S4 (17.5 cm wide)
 powershell -File figures/build_figures.ps1 -only "Figure 5"   # Origin Copy Page -> editable objects in PowerPoint
-python figures/build_figure6_network.py --hidden 200          # Fig. 6(a, b) network and crossbar schematic
-python figures/fig6c_geom.py                                  # crop/size of the Origin accuracy panel
-powershell -File figures/paste_fig6c.ps1                      # Fig. 6(c) pasted from Origin, preview exported
+python figures/build_figure6_network.py --hidden 200          # Fig. 6(a, b) network, crossbar and cross-point cell
+python figures/fig6_geom.py                                   # crop/size of the Origin panels (c, d)
+powershell -File figures/paste_fig6.ps1                       # Fig. 6(c, d) pasted from Origin, preview exported
 python figures/figure1/build_figure1.py                       # Fig. 1 from the Blender renders
 ```
 

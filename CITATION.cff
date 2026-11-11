@@ -17,8 +17,8 @@ identifiers:
   - type: doi
     value: "10.5281/zenodo.24116051"
     description: "All versions (concept DOI)"
-version: "1.0.1"
-date-released: "2026-11-10"
+version: "1.0.2"
+date-released: "2026-11-11"
 license: MIT
 preferred-citation:
   type: article

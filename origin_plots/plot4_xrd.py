@@ -167,6 +167,9 @@ def pvoigt(x, y0, xc, w, A, mu):
     G = math.sqrt(4 * math.log(2)) / (math.sqrt(math.pi) * w) * math.exp(-4 * math.log(2) * (x - xc) ** 2 / (w * w))
     return A * (mu * L + (1 - mu) * G)
 
+# NOTE (11 Nov 2026): this Origin nlfit left the (104)/(110) positions at their starting values for BiFeO3 and Sc 1 %.
+# The paper uses the converged refit of analysis/xrd/prep_xrd_doublet.py; origin_plots/xrd_decon_v2.py writes it into
+# the XRD_decon_*.opju projects made here (styling kept). Run this script first, then xrd_decon_v2.py.
 def decon(tag, name, short, col):
     def f():
         wb, ws, x, s, cs = film_book(tag, name, short)

@@ -1,9 +1,10 @@
 # Figure 6 (17.5 cm, native PowerPoint shapes, Times New Roman):
 #   (a) MNIST digit -> multilayer perceptron 784-H-10 (sigmoid)
-#   (b) mapping of one weight layer onto a crossbar of differential device pairs (w = G+ - G-),
-#       with the measured Pt/La-Sc:BFO/ITO cell as the zoomed cross-point
-#   (c) accuracy vs epoch (ideal / nonlinearity / nonlinearity + write noise): Origin panel pasted by paste_fig6c.ps1
-# usage: python build_figure6.py [--hidden 200]   then fig6c_geom.py and paste_fig6c.ps1 add panel (c) and write the preview PNG
+#   (b) mapping of one weight layer onto a crossbar of differential pairs (w = G+ - G-); the zoomed cross-point is drawn as a
+#       flat Pt/La-Sc:BFO/ITO cell whose update follows the measured one (the measured device is a pad on a film, not a crossbar)
+#   (c) update model used in CrossSim vs measured single-pulse updates, (d) accuracy vs epoch: Origin panels pasted by
+#       paste_fig6.ps1 (geometry from fig6_geom.py)
+# usage: python figures/build_figure6_network.py [--hidden 200]; python figures/fig6_geom.py; powershell -File figures/paste_fig6.ps1
 import os as _os, sys as _sys
 _sys.path.insert(0, _os.path.normpath(_os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "..")))
 import config
@@ -26,9 +27,8 @@ H = args.hidden
 
 ROOT = config.PROJECT
 OUT = config.PAPER_FIG
-PAN = os.path.join(config.WORK, "fig7_panels"); os.makedirs(PAN, exist_ok=True)
+PAN = os.path.join(config.WORK, "fig6_panels"); os.makedirs(PAN, exist_ok=True)
 MNIST = os.path.join(config.PKG, "crosssim", "data", "mnist.npz")
-CELL = os.path.join(config.FIG1, "renders", "device alpha.png")
 
 FONT = "Times New Roman"
 FS = 7.5            # body labels (Origin panels print at 6-7 pt in Figs 2-5)
@@ -40,9 +40,6 @@ d = np.load(MNIST)
 img = d["xte"][0]                       # first MNIST test image (a "7")
 lab = int(d["yte"][0])
 Image.fromarray(img.astype(np.uint8)).resize((280, 280), Image.NEAREST).save(os.path.join(PAN, "digit.png"))
-cell = Image.open(CELL).convert("RGBA")
-bb = cell.getchannel("A").point(lambda a: 255 if a > 8 else 0).getbbox()
-cell.crop(bb).save(os.path.join(PAN, "cell.png"))
 
 prs = Presentation()
 prs.slide_width, prs.slide_height = Cm(17.5), Cm(11.7)
@@ -188,20 +185,39 @@ text(X0 - 0.6, 5.3, [("I", "i"), ("j", "isub"), (" = Σ", ""), ("i", "isub"), ("
      anchor="lc", w=4.6, bold=False)
 text(X0 - 0.6, 5.72, [("w", "i"), ("ij", "isub"), (" ∝ ", ""), ("G", "i"), ("ij", "isub"), ("+", "sup"), (" − ", ""), ("G", "i"), ("ij", "isub"), ("−", "sup"),
                       (";  ", ""), ("V", "i"), ("i", "isub"), (" ∝ ", ""), ("x", "i"), ("i", "isub")], anchor="lc", w=4.6, bold=False)
-# zoom to the measured cell
-hx, hy = cols[2][0], rows[1]
+# zoom: one cross-point drawn as a flat two-terminal cell (same line style as the rest of the figure)
+hx, hy = cols[5][0], rows[1]                         # right-most G- cell: the zoom line crosses no other column
 circle(hx, hy, 0.17, fill=None, lw=1.0, color=BLACK)
-CX, CY, CW = 14.55, 0.85, 2.8
-pic = sh.add_picture(os.path.join(PAN, "cell.png"), Cm(CX), Cm(CY), Cm(CW))
-ch = pic.height / 360000
-line(hx + 0.17, hy, CX + 0.15, CY + ch * 0.55, w=0.75, dash="dash")
-text(CX + CW / 2, CY + ch + 0.1, "Measured cell", anchor="ct", w=3.0)
-text(CX + CW / 2, CY + ch + 0.45, "Pt/La-Sc:BFO/ITO", anchor="ct", w=3.0, bold=False)
-text(CX + CW / 2, CY + ch + 0.95, [("Update: power-law mean", "")], anchor="ct", w=3.0, bold=False, size=FS - 0.5)
-text(CX + CW / 2, CY + ch + 1.27, [("+ Gaussian scatter (Table 2)", "")], anchor="ct", w=3.0, bold=False, size=FS - 0.5)
+BX, BY, BW, BH = 14.45, 0.55, 2.95, 4.8                   # frame of the zoom
+rect(BX, BY, BW, BH, lw=0.6, color=GREY, dash="dash")
+line(hx + 0.17, hy, BX, hy, w=0.75, color=GREY, dash="dash")
+text(BX + BW / 2, BY + 0.1, "Cross-point cell", anchor="ct", w=BW)
+SX, SW = BX + 0.3, BW - 0.6                               # stack
+FILM = RGBColor(226, 172, 112); ITOC = RGBColor(160, 196, 232); GLASS = RGBColor(226, 234, 240); PTC = RGBColor(95, 95, 95)
+yg = BY + 3.05; rect(SX, yg, SW, 0.42, fill=GLASS, lw=0.5)
+yi = yg - 0.3;  rect(SX, yi, SW, 0.3, fill=ITOC, lw=0.5)
+yf = yi - 0.95; rect(SX, yf, SW, 0.95, fill=FILM, lw=0.5)
+PW = 0.9; yp = yf - 0.17; rect(SX + (SW - PW) / 2, yp, PW, 0.17, fill=PTC, lw=0.5)
+text(SX + SW / 2, yg + 0.21, "glass", anchor="cc", w=SW, bold=False, size=FS - 1)
+text(SX + SW / 2, yi + 0.15, "ITO", anchor="cc", w=SW, bold=False, size=FS - 1)
+text(SX + SW / 2, yf + 0.36, "La-Sc:BFO", anchor="cc", w=SW, bold=True, size=FS - 0.5)
+text(SX + SW / 2, yf + 0.68, "580 nm", anchor="cc", w=SW, bold=False, size=FS - 1)
+text(SX + (SW - PW) / 2 - 0.08, yp + 0.08, "Pt", anchor="rc", w=0.6, bold=False, size=FS - 1)
+# terminals: top electrode to V, bottom electrode to ground
+xt = SX + SW / 2
+line(xt, yp, xt, yp - 0.42, w=0.75)
+text(xt + 0.08, yp - 0.35, [("V", "i")], anchor="lc", w=0.5, bold=False, size=FS - 0.5)
+xg = SX - 0.14
+line(SX, yi + 0.15, xg, yi + 0.15, w=0.75); line(xg, yi + 0.15, xg, yg + 0.2, w=0.75)
+for k, half in enumerate((0.11, 0.07, 0.03)):
+    line(xg - half, yg + 0.2 + 0.06 * k, xg + half, yg + 0.2 + 0.06 * k, w=0.75)
+text(BX + BW / 2, BY + BH - 0.68, "update per pulse follows", anchor="cc", w=BW, bold=False, size=FS - 1)
+text(BX + BW / 2, BY + BH - 0.36, "the measured device (c)", anchor="cc", w=BW, bold=False, size=FS - 1)
 
-# ------------------------------------------------------------------ (c) Origin panel (accuracy vs epoch), pasted by paste_fig6c.ps1
-letter(5.75, 6.35, "(c)")
+# ------------------------------------------------------------------ (c), (d) Origin panels, pasted by paste_fig6.ps1
+P1, P2, PTOP = 2.6, 9.36, 6.35
+letter(P1 - 0.15, PTOP, "(c)")
+letter(P2 - 0.15, PTOP, "(d)")
 
 out = os.path.join(OUT, "Figure 6.pptx")
 prs.save(out)
